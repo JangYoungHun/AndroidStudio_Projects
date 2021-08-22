@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">DrawerLayout_practice</string>
+    <string name="open_drawer">열기</string>
+    <string name="close_drawer">닫기</string>
+</resources>

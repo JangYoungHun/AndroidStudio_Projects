@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name = "Co2_App"
