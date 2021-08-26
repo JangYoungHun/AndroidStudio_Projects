@@ -26,7 +26,7 @@ class Fragment3 : Fragment() {
 
 
         frag3_btn.setOnClickListener { view ->
-            view.findNavController().navigate(R.id.fragment1)
+       //     view.findNavController().navigate(R.id.)
         }
     }
 

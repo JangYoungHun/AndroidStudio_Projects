@@ -25,6 +25,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@android:drawable/ic_menu_sort_by_size"
+            android:clickable="true"
             app:title="Drawer"
 
          >

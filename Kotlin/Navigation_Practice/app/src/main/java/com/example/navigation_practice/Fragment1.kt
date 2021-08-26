@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_1.*
 import kotlinx.android.synthetic.main.fragment_3.*
 
@@ -27,7 +28,7 @@ class Fragment1 : Fragment() {
 
 
         frag1_btn.setOnClickListener { view ->
-            view.findNavController().navigate(R.id.fragment2)
+            this.findNavController().navigate(R.id.action_fragment1_to_fragment2)
         }
     }
 }

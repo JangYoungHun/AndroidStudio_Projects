@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/vector_drawable">
+
+    <target
+        android:name="first"
+        android:animation="@animator/play_anim_first"
+        />
+    <target
+        android:name="second"
+        android:animation="@animator/play_anim_second"
+        />
+    <target
+        android:name="third"
+        android:animation="@animator/play_anim_third"
+        />
+    <target
+        android:name="fourth"
+        android:animation="@animator/play_anim_fourth"
+        />
+</animated-vector>

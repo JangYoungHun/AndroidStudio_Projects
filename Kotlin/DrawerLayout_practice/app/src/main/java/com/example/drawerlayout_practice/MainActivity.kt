@@ -3,6 +3,7 @@ package com.example.drawerlayout_practice
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Gravity
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
@@ -14,11 +15,19 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         setSupportActionBar(toolbar)
-        val toggle = ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.open_drawer, R.string.close_drawer )
+
+       /* val toggle = ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.open_drawer, R.string.close_drawer )
         drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
+        toggle.syncState() */
+
+
+        toolbar.setNavigationOnClickListener {
+            Toast.makeText(applicationContext,"메뉴 열기 클릭",Toast.LENGTH_SHORT).show()
+            drawerLayout.openDrawer(GravityCompat.START);
+        }
 
         navigationView.setNavigationItemSelectedListener {
+            Toast.makeText(applicationContext,"클릭",Toast.LENGTH_SHORT).show()
             when(it.itemId){
                 R.id.menu1 -> changeFragment(1)
                 R.id.menu2 -> changeFragment(2)
@@ -27,6 +36,9 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
+
+
+
 
 
     }

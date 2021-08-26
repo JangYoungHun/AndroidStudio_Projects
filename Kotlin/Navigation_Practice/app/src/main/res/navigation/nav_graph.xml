@@ -9,7 +9,7 @@
         android:id="@+id/fragment1"
         android:name="com.example.navigation_practice.Fragment1"
         android:label="fragment_1"
-        tools:layout="@layout/fragment_1" >
+        tools:layout="@layout/fragment_1">
         <action
             android:id="@+id/action_fragment1_to_fragment2"
             app:destination="@id/fragment2" />
