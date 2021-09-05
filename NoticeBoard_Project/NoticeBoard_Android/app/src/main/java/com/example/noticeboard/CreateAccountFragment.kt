@@ -18,9 +18,10 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import kotlinx.android.synthetic.main.fragment_create_account.view.*
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class CreateAccount_Fragment : Fragment() {
+class CreateAccountFragment : Fragment() {
 
     lateinit var v:View
     lateinit var navController: NavController
@@ -80,7 +81,7 @@ class CreateAccount_Fragment : Fragment() {
                     showToast("환영합니다!")
                     println("회원가입 성공")
 
-                    navController.navigate(R.id.action_createAccount_Fragment_to_login_Fragment2)
+                    navController.popBackStack()
                 }
                 HttpRequest.ConnectResult.FAILED -> {
                     showToast("회원가입에 실패했습니다")
@@ -95,17 +96,16 @@ class CreateAccount_Fragment : Fragment() {
             }
         }
 
-        v.editText_id.addTextChangedListener(object : TextWatcher{
+
+
+        v.editText_id.addTextChangedListener(object:TextWatcher{
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+            override fun afterTextChanged(s: Editable?) {
                 id_check = false
                 v.btn_idCheck.text = "중복 확인"
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-
             }
         })
         return v
@@ -120,6 +120,7 @@ class CreateAccount_Fragment : Fragment() {
             var preState = false
 
             while(true){
+                delay(300L)
                 var curState = infom_validity()
                 if(preState != curState) {
                     val handler = Handler(Looper.getMainLooper())
@@ -141,7 +142,6 @@ class CreateAccount_Fragment : Fragment() {
 
     //정보를 전부 입력 했는지 확인
     fun infom_validity() : Boolean {
-
         //각 정보별 문자형식 지정 필요
         //ex 특수문자 길이제한 등
         //password 시 & 있을경우 url에 문제 생길수 있다.

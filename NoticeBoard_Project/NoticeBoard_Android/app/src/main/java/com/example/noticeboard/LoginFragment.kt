@@ -12,7 +12,7 @@ import androidx.navigation.findNavController
 import kotlinx.android.synthetic.main.fragment_login.view.*
 
 
-class Login_Fragment : Fragment() {
+class LoginFragment : Fragment() {
 
     lateinit var navController: NavController
 
@@ -45,6 +45,7 @@ class Login_Fragment : Fragment() {
                     HttpRequest.ConnectResult.SUCCESS -> {
                         println("로그인 성공")
                         showToast("로그인 성공")
+                        navController.navigate(R.id.action_login_Fragment_to_recyclerFragment)
                     }
                     HttpRequest.ConnectResult.FAILED -> {
                         println("로그인 실패")

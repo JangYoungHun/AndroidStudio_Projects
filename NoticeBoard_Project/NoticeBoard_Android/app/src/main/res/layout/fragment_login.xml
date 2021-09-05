@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/login_background"
-    tools:context=".Login_Fragment">
+    tools:context=".LoginFragment">
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_login"
