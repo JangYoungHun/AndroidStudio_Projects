@@ -30,6 +30,7 @@ import androidx.core.app.ActivityCompat;
 
 
 import com.unity3d.player.UnityPlayer;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ public class UnityPluginTest extends Activity {
     BluetoothAdapter bluetoothAdapter;
     private static UnityPluginTest m_instance;
     Set<BluetoothDevice> bluetoothDevices;
-    List<String> list ;
+    List<String> list;
     BluetoothDevice pairedBluetoothDevice;
     BluetoothSocket bluetoothSocket;
     String readMessage;
@@ -70,31 +71,36 @@ public class UnityPluginTest extends Activity {
     final static int STT_START = 3;
     ConnectThread connectThread;
     private Context context;
-    char[] detect_hall_data = {'0','0','0','0','0','0'};
-    char[] lightOnDatas= {'0','0','0','0'};
-    double door_angle= 0.0;
+    char[] detect_hall_data = {'0', '0', '0', '0', '0', '0'};
+    char[] lightOnDatas = {'0', '0', '0', '0'};
+    double door_angle = 0.0;
 
     Boolean testLamp_On = false;
 
 
-    Handler Bthandler  = new Handler(){
-        public void handleMessage(Message msg){
-            if(msg.what == BT_MESSAGE_READ){
+    Handler Bthandler = new Handler() {
+        public void handleMessage(Message msg) {
+            if (msg.what == BT_MESSAGE_READ) {
                 String message = null;
                 try {
                     message = new String((byte[]) msg.obj);
                     readMessage = message;
-                   if( readMessage.length() > 0) {
+                    if (readMessage.length() > 0) {
 
-                       switch (readMessage.charAt(0)){
-                           case 'R' : lightOnDatas = readMessage.substring(1,readMessage.length()).toCharArray(); break;
-                           case 'D' : door_angle = Double.parseDouble(readMessage.substring(1,readMessage.length())); break;
-                           case 'X' : detect_hall_data = readMessage.substring(1,readMessage.length()).toCharArray(); break;
-                       }
+                        switch (readMessage.charAt(0)) {
+                            case 'R':
+                                lightOnDatas = readMessage.substring(1, readMessage.length()).toCharArray();
+                                break;
+                            case 'D':
+                                door_angle = Double.parseDouble(readMessage.substring(1, readMessage.length()));
+                                break;
+                            case 'X':
+                                detect_hall_data = readMessage.substring(1, readMessage.length()).toCharArray();
+                                break;
+                        }
 
-                   }
-                }
-                catch(Exception e){
+                    }
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -102,63 +108,58 @@ public class UnityPluginTest extends Activity {
         }
 
 
-
-
-
-
     };
 
 
-    private void bluetoothIntent(){
+    private void bluetoothIntent() {
 
         Intent intent = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
         context.startActivity(intent);
 
     }
-    private  void sendBluetoothData(String data){
+
+    private void sendBluetoothData(String data) {
         ShowToast("데이터 전송중");
-        if(bluetoothAdapter.isEnabled() && bluetoothSocket.isConnected())
-        connectThread.write(data);
+        if (bluetoothAdapter.isEnabled() && bluetoothSocket.isConnected())
+            connectThread.write(data);
         else
             ShowToast("Bluetooth 연결을 확인해 주세요");
     }
 
 
-    private void setBluetoothAdapter(){
+    private void setBluetoothAdapter() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if(bluetoothAdapter == null)
+        if (bluetoothAdapter == null)
             ShowToast("Bluetooth를 지원하지 않는 장치입니다");
     }
-    private boolean checkBluetooth(){
+
+    private boolean checkBluetooth() {
         return bluetoothAdapter.isEnabled();
     }
 
-    private void socketDisconnect(){
+    private void socketDisconnect() {
         //아두이노 블루투스 연결 끊기 신호 전달 (초기화를 위해)
 
-        if(bluetoothSocket.isConnected()) {
+        if (bluetoothSocket.isConnected()) {
             connectThread.disconnectSocket();
         }
     }
 
-    void pairing(){
-        if(bluetoothAdapter.isEnabled())
-        {
+    void pairing() {
+        if (bluetoothAdapter.isEnabled()) {
             bluetoothDevices = bluetoothAdapter.getBondedDevices();
-            if(bluetoothDevices.size() > 0)
-            {  // 페어링 목록이 1개 이상이라면
+            if (bluetoothDevices.size() > 0) {  // 페어링 목록이 1개 이상이라면
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle("장치 목록");
                 list = new ArrayList<String>();
 
-                for(BluetoothDevice device : bluetoothDevices)
-                {
+                for (BluetoothDevice device : bluetoothDevices) {
                     list.add(device.getName());
                 }
 
                 final CharSequence[] nameList = list.toArray(new CharSequence[bluetoothDevices.size()]);
 
-                builder.setItems(nameList, new DialogInterface.OnClickListener(){
+                builder.setItems(nameList, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int item) {
@@ -170,13 +171,10 @@ public class UnityPluginTest extends Activity {
                 alertDialog.show();
 
 
-            }
-            else
-            { // 페어링 가능 기기가 0개다
+            } else { // 페어링 가능 기기가 0개다
                 Toast.makeText(context, "페어링 가능 기기가 없습니다.", Toast.LENGTH_LONG).show();
             }
-        }
-        else{
+        } else {
             // 블루투스가 off  라면
             Toast.makeText(context, "블루투스가 꺼져있습니다.", Toast.LENGTH_LONG).show();
         }
@@ -184,11 +182,9 @@ public class UnityPluginTest extends Activity {
     }
 
 
-
     private void connectSelectedDevice(String deviceName) {
-        for(BluetoothDevice devices : bluetoothDevices){
-            if(deviceName.equals(devices.getName()))
-            {
+        for (BluetoothDevice devices : bluetoothDevices) {
+            if (deviceName.equals(devices.getName())) {
                 pairedBluetoothDevice = devices;
             }
         }
@@ -196,7 +192,7 @@ public class UnityPluginTest extends Activity {
             bluetoothSocket = pairedBluetoothDevice.createInsecureRfcommSocketToServiceRecord(BT_UUID);
 
             bluetoothSocket.connect();
-            if(bluetoothSocket.isConnected()) {
+            if (bluetoothSocket.isConnected()) {
                 Toast.makeText(context, "연결 완료.", Toast.LENGTH_LONG).show();
             }
             // Thread 실행 부분
@@ -204,13 +200,13 @@ public class UnityPluginTest extends Activity {
             connectThread = new ConnectThread(bluetoothSocket);
             connectThread.setDaemon(true);
             connectThread.start();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(context, "페어링 실패.", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
 
     }
+
     private class ConnectThread extends Thread {
 
         private BluetoothSocket socket;
@@ -226,28 +222,28 @@ public class UnityPluginTest extends Activity {
                 BluetoothOutput = output;
                 write("S"); // 아두이노에 블루투스 통신 시작알림
             } catch (Exception e) {
-            Toast.makeText(context, "소켓연결중 오류 발생", Toast.LENGTH_LONG).show();
-        }
+                Toast.makeText(context, "소켓연결중 오류 발생", Toast.LENGTH_LONG).show();
+            }
 
         }
 
 
-                        public void run() {
-                            byte[] buffer= new byte[1024];
-                            int bytes;
-                            while (true) {
-                                try {
+        public void run() {
+            byte[] buffer = new byte[1024];
+            int bytes;
+            while (true) {
+                try {
 
-                                    if(input.available() > 0) {
-                                        Thread.sleep(100);
-                                        bytes = input.available(); // 읽을 수 있는 바이트수
+                    if (input.available() > 0) {
+                        Thread.sleep(100);
+                        bytes = input.available(); // 읽을 수 있는 바이트수
 
-                                        buffer = new byte[bytes];
-                                        bytes = input.read(buffer, 0, bytes); // buffer에 저장하고 읽은 바이트수 반환
-                                        Bthandler.obtainMessage(BT_MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+                        buffer = new byte[bytes];
+                        bytes = input.read(buffer, 0, bytes); // buffer에 저장하고 읽은 바이트수 반환
+                        Bthandler.obtainMessage(BT_MESSAGE_READ, bytes, -1, buffer).sendToTarget();
 
 
-                                    }
+                    }
                 } catch (Exception e) {
                     Toast.makeText(context, "데이터 수신 중 오류발생", Toast.LENGTH_LONG).show();
                 }
@@ -256,7 +252,7 @@ public class UnityPluginTest extends Activity {
         }
 
         public void write(String data) {
-            if(socket != null) {
+            if (socket != null) {
                 byte[] buffer = new byte[1024];
                 try {
                     Thread.sleep(100);
@@ -269,13 +265,11 @@ public class UnityPluginTest extends Activity {
             }
         }
 
-        public void disconnectSocket()
-        {
+        public void disconnectSocket() {
             try {
                 socket.close();
                 BluetoothOutput.close();
-            }
-            catch(Exception e){
+            } catch (Exception e) {
                 Toast.makeText(context, "소켓 해제 중 오류 발생", Toast.LENGTH_LONG).show();
             }
 
@@ -283,19 +277,19 @@ public class UnityPluginTest extends Activity {
     }
 
 
-    public boolean getSocketConnect(){
+    public boolean getSocketConnect() {
         return bluetoothSocket.isConnected();
     }
 
-    public char[] getLightOnDatas(){
+    public char[] getLightOnDatas() {
         return lightOnDatas;
     }
 
-    public double get_door_angle(){
-        return door_angle/256f*90f;
+    public double get_door_angle() {
+        return door_angle / 256f * 90f;
     }
 
-    public char[] getDetectHallData(){
+    public char[] getDetectHallData() {
         return detect_hall_data;
     }
 
@@ -303,63 +297,65 @@ public class UnityPluginTest extends Activity {
         if (m_instance == null) {
             m_instance = new UnityPluginTest();
         }
-        return m_instance; 
+        return m_instance;
     }
 
     private void setContext(Context context) {
         this.context = context;
     }
+
     private void setActivity(Activity activity) {
         UnityActivity = activity;
     }
-    private String getReadMessage(){
+
+    private String getReadMessage() {
         return readMessage;
     }
+
     private void ShowToast(String toastStr) {
         Toast.makeText(context, toastStr, Toast.LENGTH_SHORT).show();
     }
 
-    private void AndroidVersionCheck(String objName, String objMethod){
+    private void AndroidVersionCheck(String objName, String objMethod) {
         UnityPlayer.UnitySendMessage(objName, objMethod, "My Android Version: " + Build.VERSION.RELEASE);
     }
 
-    private void makeAlertDialog(String str){
+    private void makeAlertDialog(String str) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.context)
+                .setTitle("확인")
+                .setMessage(str)
+                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void BluetoothDialog(String str) {
+        if (!bluetoothAdapter.isEnabled()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this.context)
                     .setTitle("확인")
                     .setMessage(str)
                     .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-
+                            bluetoothIntent();
                         }
                     });
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
-        }
-
-    private void BluetoothDialog(String str) {
-            if (!bluetoothAdapter.isEnabled()) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this.context)
-                        .setTitle("확인")
-                        .setMessage(str)
-                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                bluetoothIntent();
-                            }
-                        });
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
-        }
-        else
+        } else
             ShowToast("블루투스가 켜져있습니다");
     }
-    private void BluetoothWrite(String str){
-        if(bluetoothSocket.isConnected()) {
+
+    private void BluetoothWrite(String str) {
+        if (bluetoothSocket.isConnected()) {
             try {
                 BluetoothOutput.write(str.getBytes());
-            }
-            catch(Exception e){
+            } catch (Exception e) {
                 Toast.makeText(context, "데이터 전송 중 오류 발생", Toast.LENGTH_LONG).show();
             }
         }
@@ -367,34 +363,36 @@ public class UnityPluginTest extends Activity {
     }
 
 
-    void TTST_Init(){
+    void TTST_Init() {
 
     }
-    void deleteTTS(){
+
+    void deleteTTS() {
         TTS.stop();
         TTS.shutdown();
         TTS = null;
     }
-    void makeTTS(String str){
-    if(TTS == null) {
-        TTS = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status != -1)
-                    TTS.setLanguage(Locale.KOREA);
-            }
-        });
-    }
+
+    void makeTTS(String str) {
+        if (TTS == null) {
+            TTS = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
+                @Override
+                public void onInit(int status) {
+                    if (status != -1)
+                        TTS.setLanguage(Locale.KOREA);
+                }
+            });
+        }
         TTS.setPitch(1f); // 톤설정
         TTS.setSpeechRate(1f);   // 말 속도 설정;
-        TTS.speak(str,TextToSpeech.QUEUE_FLUSH,null);
+        TTS.speak(str, TextToSpeech.QUEUE_FLUSH, null);
 
     }
 
-    void makeSTT(){
+    void makeSTT() {
 
 
-        if(  recognitionListener == null) {
+        if (recognitionListener == null) {
             recognitionListener = new RecognitionListener() {
                 @Override
                 public void onReadyForSpeech(Bundle params) {
@@ -485,12 +483,12 @@ public class UnityPluginTest extends Activity {
         }
 
 
-        if(intent == null) {
+        if (intent == null) {
             intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.getPackageName());
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR");
         }
-        if(speechRecognizer == null) {
+        if (speechRecognizer == null) {
             speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context);
             speechRecognizer.setRecognitionListener(recognitionListener);
         }
@@ -500,12 +498,9 @@ public class UnityPluginTest extends Activity {
 
     }
 
-    String getSTT(){
+    String getSTT() {
         return STT;
     }
-
-
-
 }
 
 
