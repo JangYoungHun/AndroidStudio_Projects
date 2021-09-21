@@ -16,26 +16,19 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * Servlet implementation class UserDAO
- */
 @WebServlet("/Service")
 public class Service extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	// mysql 주소
+	// mysql 접속 정보
 	private static final String SQL_URL = "jdbc:mysql://localhost:3306/noticeboard";
 	private static final String SQL_ID = "admin";
 	private static final String SQL_PWD = "admin";
 
 	UserDao userDao;
-
 	PrintWriter printWriter;
 
-	public Service() {
-
-	}
-
+	//초기화
 	@Override
 	public void init() throws ServletException {
 		// TODO Auto-generated method stub
@@ -117,8 +110,6 @@ public class Service extends HttpServlet {
 	}
 
 
-
-
 	// id 중복확인
 	void isExist(String id) throws SQLException {
 
@@ -166,6 +157,7 @@ public class Service extends HttpServlet {
 
 	}
 
+	//로그인 정보 확인 
 	void login(String id, String pwd) throws SQLException {
 
 		int requestResult = userDao.login(id, pwd);
@@ -192,7 +184,7 @@ public class Service extends HttpServlet {
 		printWriter.close();
 	}
 
-
+	//메모 추가
 	private void addNotice(String title, String author, String body, String date) {	
 		boolean requestResult = userDao.addNotice(title, author, body, date);
 		// true : 추가 성공
@@ -207,7 +199,7 @@ public class Service extends HttpServlet {
 		printWriter.flush();
 		printWriter.close();
 	}
-	
+	//메모 정보 읽기
 	private void readNotice() {
 		try {
 		String result = userDao.readNotice();
@@ -219,8 +211,7 @@ public class Service extends HttpServlet {
 			printWriter.write("SERVER_ERROR");
 		}
 	}
-	
-	
+	//자원 정리
 	@Override
 	public void destroy() {
 		userDao.destroy();
@@ -228,3 +219,7 @@ public class Service extends HttpServlet {
 	}
 
 }
+
+
+
+
