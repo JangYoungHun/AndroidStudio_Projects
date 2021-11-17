@@ -23,10 +23,6 @@ import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import androidx.core.app.ActivityCompat;
 
 
 import com.unity3d.player.UnityPlayer;
@@ -42,7 +38,7 @@ import java.util.UUID;
 public class UnityPluginTest extends Activity {
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate( Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
@@ -71,44 +67,10 @@ public class UnityPluginTest extends Activity {
     final static int STT_START = 3;
     ConnectThread connectThread;
     private Context context;
-    char[] detect_hall_data = {'0', '0', '0', '0', '0', '0'};
-    char[] lightOnDatas = {'0', '0', '0', '0'};
-    double door_angle = 0.0;
+
 
     Boolean testLamp_On = false;
 
-
-    Handler Bthandler = new Handler() {
-        public void handleMessage(Message msg) {
-            if (msg.what == BT_MESSAGE_READ) {
-                String message = null;
-                try {
-                    message = new String((byte[]) msg.obj);
-                    readMessage = message;
-                    if (readMessage.length() > 0) {
-
-                        switch (readMessage.charAt(0)) {
-                            case 'R':
-                                lightOnDatas = readMessage.substring(1, readMessage.length()).toCharArray();
-                                break;
-                            case 'D':
-                                door_angle = Double.parseDouble(readMessage.substring(1, readMessage.length()));
-                                break;
-                            case 'X':
-                                detect_hall_data = readMessage.substring(1, readMessage.length()).toCharArray();
-                                break;
-                        }
-
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
-
-
-    };
 
 
     private void bluetoothIntent() {
@@ -233,14 +195,13 @@ public class UnityPluginTest extends Activity {
             int bytes;
             while (true) {
                 try {
-
                     if (input.available() > 0) {
                         Thread.sleep(100);
                         bytes = input.available(); // 읽을 수 있는 바이트수
 
                         buffer = new byte[bytes];
                         bytes = input.read(buffer, 0, bytes); // buffer에 저장하고 읽은 바이트수 반환
-                        Bthandler.obtainMessage(BT_MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+                        String recv = new String(buffer);
 
 
                     }
@@ -279,18 +240,6 @@ public class UnityPluginTest extends Activity {
 
     public boolean getSocketConnect() {
         return bluetoothSocket.isConnected();
-    }
-
-    public char[] getLightOnDatas() {
-        return lightOnDatas;
-    }
-
-    public double get_door_angle() {
-        return door_angle / 256f * 90f;
-    }
-
-    public char[] getDetectHallData() {
-        return detect_hall_data;
     }
 
     public static UnityPluginTest instance() {
@@ -391,7 +340,7 @@ public class UnityPluginTest extends Activity {
 
     void makeSTT() {
 
-
+        STT = "";
         if (recognitionListener == null) {
             recognitionListener = new RecognitionListener() {
                 @Override
